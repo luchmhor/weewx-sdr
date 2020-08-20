@@ -1825,6 +1825,49 @@ class OSPCR800Packet(Packet):
         pkt['rain_total'] = Packet.get_float(obj, 'rain_total')
         return OS.insert_ids(pkt, OSPCR800Packet.__name__)
 
+      
+class OSPCR800v2Packet(Packet):
+    # 2016-11-03 04:36:23 : OS : PCR800
+    # House Code: 93
+    # Channel: 0
+    # Battery: OK
+    # Rain Rate: 0.0 in/hr
+    # Total Rain: 41.0 in
+
+    IDENTIFIER = "Oregon-PCR800"
+    PARSEINFO = {
+        'House Code': ['house_code', None, lambda x: int(x)],
+        'Channel': ['channel', None, lambda x: int(x)],
+        'Battery': ['battery', None, lambda x: 0 if x == 'OK' else 1],
+        'Rain Rate':
+            ['rain_rate', re.compile('([\d.]+) in'), lambda x: float(x)],
+        'Total Rain':
+            ['rain_total', re.compile('([\d.]+) in'), lambda x: float(x)]}
+
+    @staticmethod
+    def parse_text(ts, payload, lines):
+        pkt = dict()
+        pkt['dateTime'] = ts
+        pkt['usUnits'] = weewx.US
+        pkt.update(Packet.parse_lines(lines, OSPCR800v2Packet.PARSEINFO))
+        return OS.insert_ids(pkt, OSPCR800v2Packet.__name__)
+
+    #  new {"time" : "2020-08-19 19:31:13", "brand" : "OS", "model" : "Oregon-PCR800",
+      # "id" : 80, "channel" : 0, "battery_ok" : 1, "rain_rate_in_h" : 0.000, "rain_in" : 27.741}
+    #  old {"time" : "2018-08-04 15:29:27", "brand" : "OS", "model" : "PCR800",
+      # "id" : 236, "channel" : 0, "battery" : "OK", "rain_rate" : 0.000, "rain_total" : 109.594}
+    @staticmethod
+    def parse_json(obj):
+        pkt = dict()
+        pkt['dateTime'] = Packet.parse_time(obj.get('time'))
+        pkt['usUnits'] = weewx.US
+        pkt['house_code'] = obj.get('id')
+        pkt['channel'] = obj.get('channel')
+        pkt['battery'] = 0 if obj.get('battery_ok') == 'OK' else 1
+        pkt['rain_rate'] = Packet.get_float(obj, 'rain_rate_in_h')
+        pkt['rain_total'] = Packet.get_float(obj, 'rain_in')
+        return OS.insert_ids(pkt, OSPCR800v2Packet.__name__)
+
 
 # apparently rtl_433 uses BHTR968 when it should be BTHR968
 class OSBTHR968Packet(Packet):
