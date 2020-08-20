@@ -2198,7 +2198,7 @@ class OSWGR800v2Packet(Packet):
     # Average: 1.1 m/s
     # Direction: 22.5 degrees
 
-    IDENTIFIER = "Oregon-WGR800"
+    IDENTIFIER = "WGR800"
     PARSEINFO = {
         'House Code': ['house_code', None, lambda x: int(x)],
         'Channel': ['channel', None, lambda x: int(x)],
@@ -2609,6 +2609,7 @@ class PacketFactory(object):
         LaCrosseTXPacket,
         NexusTemperaturePacket,
         OSPCR800Packet,
+        PSPCR800v2Packet,
         OSBTHR968Packet,
         OSTHGR122NPacket,
         OSTHGR810Packet,
@@ -2617,6 +2618,7 @@ class PacketFactory(object):
         OSUV800Packet,
         OSUVR128Packet,
         OSWGR800Packet,
+        OSWGR800v2Packet,
         OSTHN802Packet,
         OSBTHGN129Packet,
         OSTHGR968Packet,
