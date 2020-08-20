@@ -2198,7 +2198,7 @@ class OSWGR800v2Packet(Packet):
     # Average: 1.1 m/s
     # Direction: 22.5 degrees
 
-    IDENTIFIER = "WGR800"
+    IDENTIFIER = "Oregon-WGR800"
     PARSEINFO = {
         'House Code': ['house_code', None, lambda x: int(x)],
         'Channel': ['channel', None, lambda x: int(x)],
