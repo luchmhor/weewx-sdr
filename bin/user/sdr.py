@@ -1812,46 +1812,6 @@ class OSPCR800Packet(Packet):
         pkt.update(Packet.parse_lines(lines, OSPCR800Packet.PARSEINFO))
         return OS.insert_ids(pkt, OSPCR800Packet.__name__)
 
-    # {"time" : "2018-08-04 15:29:27", "brand" : "OS", "model" : "PCR800", "id" : 236, "channel" : 0, "battery" : "OK", "rain_rate" : 0.000, "rain_total" : 109.594}
-    @staticmethod
-    def parse_json(obj):
-        pkt = dict()
-        pkt['dateTime'] = Packet.parse_time(obj.get('time'))
-        pkt['usUnits'] = weewx.US
-        pkt['house_code'] = obj.get('id')
-        pkt['channel'] = obj.get('channel')
-        pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
-        pkt['rain_rate'] = Packet.get_float(obj, 'rain_rate')
-        pkt['rain_total'] = Packet.get_float(obj, 'rain_total')
-        return OS.insert_ids(pkt, OSPCR800Packet.__name__)
-
-      
-class OSPCR800v2Packet(Packet):
-    # 2016-11-03 04:36:23 : OS : PCR800
-    # House Code: 93
-    # Channel: 0
-    # Battery: OK
-    # Rain Rate: 0.0 in/hr
-    # Total Rain: 41.0 in
-
-    IDENTIFIER = "Oregon-PCR800"
-    PARSEINFO = {
-        'House Code': ['house_code', None, lambda x: int(x)],
-        'Channel': ['channel', None, lambda x: int(x)],
-        'Battery': ['battery', None, lambda x: 0 if x == 'OK' else 1],
-        'Rain Rate':
-            ['rain_rate', re.compile('([\d.]+) in'), lambda x: float(x)],
-        'Total Rain':
-            ['rain_total', re.compile('([\d.]+) in'), lambda x: float(x)]}
-
-    @staticmethod
-    def parse_text(ts, payload, lines):
-        pkt = dict()
-        pkt['dateTime'] = ts
-        pkt['usUnits'] = weewx.US
-        pkt.update(Packet.parse_lines(lines, OSPCR800v2Packet.PARSEINFO))
-        return OS.insert_ids(pkt, OSPCR800v2Packet.__name__)
-
     #  new {"time" : "2020-08-19 19:31:13", "brand" : "OS", "model" : "Oregon-PCR800",
       # "id" : 80, "channel" : 0, "battery_ok" : 1, "rain_rate_in_h" : 0.000, "rain_in" : 27.741}
     #  old {"time" : "2018-08-04 15:29:27", "brand" : "OS", "model" : "PCR800",
@@ -1866,7 +1826,7 @@ class OSPCR800v2Packet(Packet):
         pkt['battery'] = 0 if obj.get('battery_ok') == 'OK' else 1
         pkt['rain_rate'] = Packet.get_float(obj, 'rain_rate_in_h')
         pkt['rain_total'] = Packet.get_float(obj, 'rain_in')
-        return OS.insert_ids(pkt, OSPCR800v2Packet.__name__)
+        return OS.insert_ids(pkt, OSPCR800Packet.__name__)
 
 
 # apparently rtl_433 uses BHTR968 when it should be BTHR968
@@ -2172,51 +2132,6 @@ class OSWGR800Packet(Packet):
         pkt['usUnits'] = weewx.METRICWX
         pkt.update(Packet.parse_lines(lines, OSWGR800Packet.PARSEINFO))
         return OS.insert_ids(pkt, OSWGR800Packet.__name__)
-
-    # {"time" : "2018-08-04 15:29:19", "brand" : "OS", "model" : "WGR800", "id" : 93, "channel" : 0, "battery" : "OK", "gust" : 0.700, "average" : 1.000, "direction" : 315.000}
-
-    @staticmethod
-    def parse_json(obj):
-        pkt = dict()
-        pkt['dateTime'] = Packet.parse_time(obj.get('time'))
-        pkt['usUnits'] = weewx.METRICWX
-        pkt['house_code'] = obj.get('id')
-        pkt['channel'] = obj.get('channel')
-        pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
-        pkt['wind_gust'] = Packet.get_float(obj, 'gust')
-        pkt['wind_speed'] = Packet.get_float(obj, 'average')
-        pkt['wind_dir'] = Packet.get_float(obj, 'direction')
-        return OS.insert_ids(pkt, OSWGR800Packet.__name__)
-
-      
-class OSWGR800v2Packet(Packet):
-    # 2016-11-03 04:36:34 : OS : WGR800
-    # House Code: 85
-    # Channel: 0
-    # Battery: OK
-    # Gust: 1.1 m/s
-    # Average: 1.1 m/s
-    # Direction: 22.5 degrees
-
-    IDENTIFIER = "Oregon-WGR800"
-    PARSEINFO = {
-        'House Code': ['house_code', None, lambda x: int(x)],
-        'Channel': ['channel', None, lambda x: int(x)],
-        'Battery': ['battery', None, lambda x: 0 if x == 'OK' else 1],
-        'Gust': [
-            'wind_gust', re.compile('([\d.]+) m'), lambda x: float(x)],
-        'Average': [
-            'wind_speed', re.compile('([\d.]+) m'), lambda x: float(x)],
-        'Direction': [
-            'wind_dir', re.compile('([\d.]+) degrees'), lambda x: float(x)]}
-
-    @staticmethod
-    def parse_text(ts, payload, lines):
-        pkt = dict()
-        pkt['dateTime'] = ts
-        pkt['usUnits'] = weewx.METRICWX
-        pkt.update(Packet.parse_lines(lines, OSWGR800v2Packet.PARSEINFO))
-        return OS.insert_ids(pkt, OSWGR800v2Packet.__name__)
     # new {"time" : "2020-08-19 19:31:12", "brand" : "OS", "model" : "Oregon-WGR800", "id" : 177, "channel" : 0, "battery_ok" : 1, "wind_max_m_s" : 2.300, "wind_avg_m_s" : 2.700, "wind_dir_deg" : 315.000}'
 
     # old {"time" : "2018-08-04 15:29:19", "brand" : "OS", "model" : "WGR800", "id" : 93, "channel" : 0, "battery" : "OK", "gust" : 0.700, "average" : 1.000, "direction" : 315.000}
@@ -2232,7 +2147,7 @@ class OSWGR800v2Packet(Packet):
         pkt['wind_gust'] = Packet.get_float(obj, 'wind_max_m_s')
         pkt['wind_speed'] = Packet.get_float(obj, 'wind_avg_m_s')
         pkt['wind_dir'] = Packet.get_float(obj, 'wind_dir_deg')
-        return OS.insert_ids(pkt, OSWGR800v2Packet.__name__)
+        return OS.insert_ids(pkt, OSWGR800Packet.__name__)
 
 
 class OSTHN802Packet(Packet):
@@ -2609,7 +2524,6 @@ class PacketFactory(object):
         LaCrosseTXPacket,
         NexusTemperaturePacket,
         OSPCR800Packet,
-        OSPCR800v2Packet,
         OSBTHR968Packet,
         OSTHGR122NPacket,
         OSTHGR810Packet,
@@ -2618,7 +2532,6 @@ class PacketFactory(object):
         OSUV800Packet,
         OSUVR128Packet,
         OSWGR800Packet,
-        OSWGR800v2Packet,
         OSTHN802Packet,
         OSBTHGN129Packet,
         OSTHGR968Packet,
