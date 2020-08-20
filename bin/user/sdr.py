@@ -2609,7 +2609,7 @@ class PacketFactory(object):
         LaCrosseTXPacket,
         NexusTemperaturePacket,
         OSPCR800Packet,
-        PSPCR800v2Packet,
+        OSPCR800v2Packet,
         OSBTHR968Packet,
         OSTHGR122NPacket,
         OSTHGR810Packet,
