@@ -2188,6 +2188,52 @@ class OSWGR800Packet(Packet):
         pkt['wind_dir'] = Packet.get_float(obj, 'direction')
         return OS.insert_ids(pkt, OSWGR800Packet.__name__)
 
+      
+class OSWGR800v2Packet(Packet):
+    # 2016-11-03 04:36:34 : OS : WGR800
+    # House Code: 85
+    # Channel: 0
+    # Battery: OK
+    # Gust: 1.1 m/s
+    # Average: 1.1 m/s
+    # Direction: 22.5 degrees
+
+    IDENTIFIER = "Oregon-WGR800"
+    PARSEINFO = {
+        'House Code': ['house_code', None, lambda x: int(x)],
+        'Channel': ['channel', None, lambda x: int(x)],
+        'Battery': ['battery', None, lambda x: 0 if x == 'OK' else 1],
+        'Gust': [
+            'wind_gust', re.compile('([\d.]+) m'), lambda x: float(x)],
+        'Average': [
+            'wind_speed', re.compile('([\d.]+) m'), lambda x: float(x)],
+        'Direction': [
+            'wind_dir', re.compile('([\d.]+) degrees'), lambda x: float(x)]}
+
+    @staticmethod
+    def parse_text(ts, payload, lines):
+        pkt = dict()
+        pkt['dateTime'] = ts
+        pkt['usUnits'] = weewx.METRICWX
+        pkt.update(Packet.parse_lines(lines, OSWGR800v2Packet.PARSEINFO))
+        return OS.insert_ids(pkt, OSWGR800v2Packet.__name__)
+    # new {"time" : "2020-08-19 19:31:12", "brand" : "OS", "model" : "Oregon-WGR800", "id" : 177, "channel" : 0, "battery_ok" : 1, "wind_max_m_s" : 2.300, "wind_avg_m_s" : 2.700, "wind_dir_deg" : 315.000}'
+
+    # old {"time" : "2018-08-04 15:29:19", "brand" : "OS", "model" : "WGR800", "id" : 93, "channel" : 0, "battery" : "OK", "gust" : 0.700, "average" : 1.000, "direction" : 315.000}
+
+    @staticmethod
+    def parse_json(obj):
+        pkt = dict()
+        pkt['dateTime'] = Packet.parse_time(obj.get('time'))
+        pkt['usUnits'] = weewx.METRICWX
+        pkt['house_code'] = obj.get('id')
+        pkt['channel'] = obj.get('channel')
+        pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
+        pkt['wind_gust'] = Packet.get_float(obj, 'wind_max_m_s')
+        pkt['wind_speed'] = Packet.get_float(obj, 'wind_avg_m_s')
+        pkt['wind_dir'] = Packet.get_float(obj, 'wind_dir_deg')
+        return OS.insert_ids(pkt, OSWGR800v2Packet.__name__)
+
 
 class OSTHN802Packet(Packet):
     # 2017-08-03 17:24:08     :       OS :    THN802
