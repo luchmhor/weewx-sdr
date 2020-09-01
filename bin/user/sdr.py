@@ -2076,7 +2076,7 @@ class OSUVR128Packet(Packet):
     # UV Index: 0
     # Battery: OK
 
-    IDENTIFIER = "Oregon Scientific UVR128"
+    IDENTIFIER = "Oregon-UVR128"
     PARSEINFO = {
         'House Code': ['house_code', None, lambda x: int(x)],
         'UV Index': ['uv_index', re.compile('([\d.-]+) C'), lambda x: float(x)],
@@ -2090,6 +2090,7 @@ class OSUVR128Packet(Packet):
         pkt.update(Packet.parse_lines(lines, OSUVR128Packet.PARSEINFO))
         return OS.insert_ids(pkt, OSUVR128Packet.__name__)
 
+    # NEW: {"time" : "2020-09-01 06:08:55", "model" : "Oregon-UVR128", "id" : 208, "uv" : 0, "battery_ok" : 1}
     # {"time" : "2019-11-05 07:07:07", "model" : "Oregon Scientific UVR128", "id" : 116, "uv" : 0, "battery" : "OK"}
     # {"time" : "2019-11-19 06:44:53", "model" : "Oregon Scientific UVR128", "id" : 116, "uv" : 0, "battery" : "OK"}
 
@@ -2100,7 +2101,7 @@ class OSUVR128Packet(Packet):
         pkt['usUnits'] = weewx.METRIC
         pkt['house_code'] = obj.get('id')
         pkt['uv_index'] = Packet.get_float(obj, 'uv')
-        pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
+        pkt['battery'] = obj.get('battery_ok')
         return OS.insert_ids(pkt, OSUVR128Packet.__name__)
 
 
