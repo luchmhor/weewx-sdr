@@ -2076,7 +2076,7 @@ class OSUVR128Packet(Packet):
     # UV Index: 0
     # Battery: OK
 
-    IDENTIFIER = "Oregon-UVR128"
+    IDENTIFIER = "UVR128"
     PARSEINFO = {
         'House Code': ['house_code', None, lambda x: int(x)],
         'UV Index': ['uv_index', re.compile('([\d.-]+) C'), lambda x: float(x)],
@@ -2101,7 +2101,7 @@ class OSUVR128Packet(Packet):
         pkt['usUnits'] = weewx.METRIC
         pkt['house_code'] = obj.get('id')
         pkt['uv_index'] = Packet.get_float(obj, 'uv')
-        pkt['battery'] = obj.get('battery_ok')
+        pkt['battery'] = 1 if Packet.get_int(obj, 'battery_ok') == 0 else 0
         return OS.insert_ids(pkt, OSUVR128Packet.__name__)
 
 
