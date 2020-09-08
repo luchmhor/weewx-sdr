@@ -1823,7 +1823,7 @@ class OSPCR800Packet(Packet):
         pkt['usUnits'] = weewx.US
         pkt['house_code'] = obj.get('id')
         pkt['channel'] = obj.get('channel')
-        pkt['battery'] = 0 if obj.get('battery_ok') == 'OK' else 1
+        pkt['battery'] = 1 if Packet.get_int(obj, 'battery_ok') == 0 else 0
         pkt['rain_rate'] = Packet.get_float(obj, 'rain_rate_in_h')
         pkt['rain_total'] = Packet.get_float(obj, 'rain_in')
         return OS.insert_ids(pkt, OSPCR800Packet.__name__)
@@ -1967,7 +1967,7 @@ class OSTHGR810Packet(Packet):
         pkt['usUnits'] = weewx.METRIC
         pkt['house_code'] = obj.get('id')
         pkt['channel'] = obj.get('channel')
-        pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
+        pkt['battery'] = 1 if Packet.get_int(obj, 'battery_ok') == 0 else 0
         pkt['temperature'] = Packet.get_float(obj, 'temperature_C')
         pkt['humidity'] = Packet.get_float(obj, 'humidity')
         return OS.insert_ids(pkt, OSTHGR810Packet.__name__)
@@ -2144,7 +2144,7 @@ class OSWGR800Packet(Packet):
         pkt['usUnits'] = weewx.METRICWX
         pkt['house_code'] = obj.get('id')
         pkt['channel'] = obj.get('channel')
-        pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
+        pkt['battery'] = 1 if Packet.get_int(obj, 'battery_ok') == 0 else 0
         pkt['wind_gust'] = Packet.get_float(obj, 'wind_max_m_s')
         pkt['wind_speed'] = Packet.get_float(obj, 'wind_avg_m_s')
         pkt['wind_dir'] = Packet.get_float(obj, 'wind_dir_deg')
